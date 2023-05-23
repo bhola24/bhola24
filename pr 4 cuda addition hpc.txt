@@ -1,0 +1,140 @@
+#include <iostream>
+#include <cuda_runtime.h>
+
+These lines include the necessary headers for using CUDA 
+and standard input/output operations.
+
+ 
+__global__ void addVectors(int* A, int* B, int* C, int n)
+{
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i < n)
+    {
+        C[i] = A[i] + B[i];
+    }
+}
+
+This declares a CUDA kernel function addVectors that performs vector addition on 
+the GPU. The function takes in three integer pointers A, B, and C representing the input 
+vectors and the output vector, respectively. The parameter n specifies the size of the vectors. 
+Each thread in the GPU calculates its index i based on the block and thread indices and performs vector 
+addition if i is within the vector size.
+
+ 
+int main()
+{
+    int n = 1000000;
+    int* A, * B, * C;
+    int size = n * sizeof(int);
+
+    cudaMallocManaged(&A, size);
+    cudaMallocManaged(&B, size);
+    cudaMallocManaged(&C, size);
+
+In the main function, n represents the size of the vectors.
+Pointers A, B, and C will be used to allocate memory for the input and output 
+vectors on the GPU using cudaMallocManaged. The size variable calculates the size of each vector in bytes.
+
+ 
+    for (int i = 0; i < n; i++)
+    {
+        A[i] = i;
+        B[i] = i * 2;
+    }
+
+This loop initializes the input vectors A and B with some values.
+
+ 
+    int blockSize = 256;
+    int numBlocks = (n + blockSize - 1) / blockSize;
+    addVectors<<<numBlocks, blockSize>>>(A, B, C, n);
+    cudaDeviceSynchronize();
+
+Here, blockSize represents the number of threads per block, and numBlocks
+calculates the number of blocks needed to cover the entire vector. The addVectors kernel is 
+launched with the specified number of blocks and threads using the <<<...>>> syntax. 
+The input and output vectors are passed as arguments. cudaDeviceSynchronize() 
+ensures that the CPU waits for the GPU kernel to finish before proceeding.
+
+cpp
+Copy code
+    for (int i = 0; i < 10; i++)
+    {
+        std::cout << C[i] << " ";
+    }
+    std::cout << std::endl;
+
+This loop prints the first 10 elements of the resulting vector C on the CPU side.
+
+ 
+    cudaFree(A);
+    cudaFree(B);
+    cudaFree(C);
+
+The allocated GPU memory is freed using cudaFree to release the resources.
+
+ 
+    return 0;
+}
+
+The program ends by returning 0 to indicate successful execution.
+
+
+
+
+
+
+RAW CODE:
+
+#include <iostream>
+#include <cuda_runtime.h>
+
+__global__ void addVectors(int* A, int* B, int* C, int n)
+{
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i < n)
+    {
+        C[i] = A[i] + B[i];
+    }
+}
+
+int main()
+{
+    int n = 1000000;
+    int* A, * B, * C;
+    int size = n * sizeof(int);
+
+    cudaMallocManaged(&A, size);
+    cudaMallocManaged(&B, size);
+    cudaMallocManaged(&C, size);
+
+    for (int i = 0; i < n; i++)
+    {
+        A[i] = i;
+        B[i] = i * 2;
+    }
+
+    int blockSize = 256;
+    int numBlocks = (n + blockSize - 1) / blockSize;
+    addVectors<<<numBlocks, blockSize>>>(A, B, C, n);
+    cudaDeviceSynchronize();
+
+    for (int i = 0; i < 10; i++)
+    {
+        std::cout << C[i] << " ";
+    }
+    std::cout << std::endl;
+
+    cudaFree(A);
+    cudaFree(B);
+    cudaFree(C);
+
+    return 0;
+}
+
+
+
+
+
+
+

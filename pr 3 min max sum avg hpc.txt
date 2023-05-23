@@ -1,0 +1,224 @@
+Certainly! Here's an explanation of the code line by line:
+
+cpp
+Copy code
+#include <iostream>
+#include <omp.h>
+#include <climits>
+using namespace std;
+
+This code includes the necessary headers for input/output, OpenMP for parallel programming,
+and climits for using INT_MAX and INT_MIN constants. The using namespace std; statement allows using cout and endl directly.
+
+ 
+void min_reduction(int arr[], int n) {
+  int min_value = INT_MAX;
+  #pragma omp parallel for reduction(min: min_value)
+  for (int i = 0; i < n; i++) {
+    if (arr[i] < min_value) {
+      min_value = arr[i];
+    }
+  }
+  cout << "Minimum value: " << min_value << endl;
+}
+This function min_reduction calculates the minimum value in the array arr.
+It initializes min_value with the maximum possible value using INT_MAX. 
+The #pragma omp parallel for reduction(min: min_value) directive parallelizes 
+the loop and performs the reduction operation on min_value.
+Each thread compares its local minimum with the shared minimum value and updates it if necessary.
+
+ 
+void max_reduction(int arr[], int n) {
+  int max_value = INT_MIN;
+  #pragma omp parallel for reduction(max: max_value)
+  for (int i = 0; i < n; i++) {
+    if (arr[i] > max_value) {
+      max_value = arr[i];
+    }
+  }
+  cout << "Maximum value: " << max_value << endl;
+}
+This function max_reduction calculates the maximum value in the array arr. It initializes max_value with the
+ minimum possible value using INT_MIN. The #pragma omp parallel for reduction(max: max_value) directive
+ parallelizes the loop and performs the reduction operation on max_value. Each thread compares
+ its local maximum with the shared maximum value and updates it if necessary.
+
+cpp
+Copy code
+void sum_reduction(int arr[], int n) {
+  int sum = 0;
+  #pragma omp parallel for reduction(+: sum)
+  for (int i = 0; i < n; i++) {
+    sum += arr[i];
+  }
+  cout << "Sum: " << sum << endl;
+}
+This function sum_reduction calculates the sum of all elements in the array arr.
+It initializes sum to zero. The #pragma omp parallel for reduction(+: sum) directive parallelizes 
+the loop and performs the reduction operation on sum. Each thread calculates its local sum, and the results 
+are combined at the end using the reduction operation +.
+
+ 
+void average_reduction(int arr[], int n) {
+  int sum = 0;
+  #pragma omp parallel for reduction(+: sum)
+  for (int i = 0; i < n; i++) {
+    sum += arr[i];
+  }
+  cout << "Average: " << (double)sum / (n-1) << endl;
+}
+
+This function average_reduction calculates the average of all elements in the array arr. 
+It initializes sum to zero. The #pragma omp parallel for reduction(+: sum) directive parallelizes 
+the loop and performs the reduction operation on sum. Each thread calculates its local sum, and the results 
+are combined at the end using the reduction operation +. However, there is an error in the calculation of the average. 
+Instead of dividing by n-1, it should be divided by n to get the correct average.
+
+ 
+int main() {
+    int *arr,n;
+    cout<<"\n enter total no of elements=>";
+    cin>>n;
+    arr=new int[n];
+    cout<<"\n enter elements=>";
+    for(int i=0;i<n;i++)
+    {
+     cin>>arr[i];
+    }
+
+  min_reduction(arr, n);
+  max_reduction(arr, n);
+  sum_reduction(arr, n);
+  average_reduction(arr, n);
+}
+
+The main function is the entry point of the program. It prompts the user to enter the number
+of elements and the elements themselves. Then, it calls the four reduction functions to calculate 
+and display the minimum, maximum, sum, and average of the input array.
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#include <iostream>
+#include <omp.h>
+#include <climits>
+using namespace std;
+
+void min_reduction(int arr[], int n) {
+  int min_value = INT_MAX;
+  #pragma omp parallel for reduction(min: min_value)
+  for (int i = 0; i < n; i++) {
+	if (arr[i] < min_value) {
+  	min_value = arr[i];
+	}
+  }
+  cout << "Minimum value: " << min_value << endl;
+}
+
+void max_reduction(int arr[], int n) {
+  int max_value = INT_MIN;
+  #pragma omp parallel for reduction(max: max_value)
+  for (int i = 0; i < n; i++) {
+	if (arr[i] > max_value) {
+  	max_value = arr[i];
+	}
+  }
+  cout << "Maximum value: " << max_value << endl;
+}
+
+void sum_reduction(int arr[], int n) {
+  int sum = 0;
+   #pragma omp parallel for reduction(+: sum)
+   for (int i = 0; i < n; i++) {
+	sum += arr[i];
+  }
+  cout << "Sum: " << sum << endl;
+}
+
+void average_reduction(int arr[], int n) {
+  int sum = 0;
+  #pragma omp parallel for reduction(+: sum)
+  for (int i = 0; i < n; i++) {
+	sum += arr[i];
+  }
+  cout << "Average: " << (double)sum / (n) << endl;
+}
+
+int main() {
+    int *arr,n;
+    cout<<"\n enter total no of elements=>";
+    cin>>n;
+    arr=new int[n];
+    cout<<"\n enter elements=>";
+    for(int i=0;i<n;i++)
+    {
+   	 cin>>arr[i];
+    }
+
+  min_reduction(arr, n);
+  max_reduction(arr, n);
+  sum_reduction(arr, n);
+  average_reduction(arr, n);
+}

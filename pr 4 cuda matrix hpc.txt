@@ -1,0 +1,177 @@
+#include <cuda_runtime.h>
+#include <iostream>
+
+These lines include the necessary header files for CUDA 
+runtime functions and standard input/output operations.
+
+ 
+__global__ void matmul(int* A, int* B, int* C, int N) {
+    int Row = blockIdx.y * blockDim.y + threadIdx.y;
+    int Col = blockIdx.x * blockDim.x + threadIdx.x;
+
+    if (Row < N && Col < N) {
+        int Pvalue = 0;
+        for (int k = 0; k < N; k++) {
+            Pvalue += A[Row * N + k] * B[k * N + Col];
+        }
+        C[Row * N + Col] = Pvalue;
+    }
+}
+
+This is the definition of the kernel function matmul. 
+It performs matrix multiplication between matrices A and B and stores the result in matrix C.
+The input N represents the dimension of the matrices. 
+Each thread in the GPU grid calculates one element of the resulting matrix. 
+The Row and Col variables determine the position of the thread in the grid, and only 
+valid threads perform the matrix multiplication. The result is stored in the corresponding location of matrix C.
+ 
+
+int main() {
+    int N = 512;
+    int size = N * N * sizeof(int);
+    int* A, * B, * C;
+    int* dev_A, * dev_B, * dev_C;
+
+    cudaMallocHost(&A, size);
+    cudaMallocHost(&B, size);
+    cudaMallocHost(&C, size);
+
+    cudaMalloc(&dev_A, size);
+    cudaMalloc(&dev_B, size);
+    cudaMalloc(&dev_C, size);
+
+This is the main function. It initializes the variables and allocates memory for matrices A, B, and C. 
+cudaMallocHost is used to allocate page-locked memory on the host (CPU), 
+and cudaMalloc is used to allocate memory on the device (GPU).
+ 
+
+    // Initialize matrices A and B
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            A[i * N + j] = i * N + j;
+            B[i * N + j] = j * N + i;
+        }
+    }
+
+    cudaMemcpy(dev_A, A, size, cudaMemcpyHostToDevice);
+    cudaMemcpy(dev_B, B, size, cudaMemcpyHostToDevice);
+
+This code initializes matrices A and B with some values using nested loops. 
+Then, it copies the data from the host (CPU) to the device (GPU) using cudaMemcpy 
+to transfer data from A and B on the host to dev_A and dev_B on the device.
+
+ 
+    dim3 dimBlock(16, 16);
+    dim3 dimGrid(N / dimBlock.x, N / dimBlock.y);
+
+    matmul<<<dimGrid, dimBlock>>>(dev_A, dev_B, dev_C, N);
+
+cudaMemcpy(C, dev_C, size, cudaMemcpyDeviceToHost);
+These lines define the block and grid dimensions for the GPU computation.
+The matmul kernel is then launched on the GPU with the specified block and grid dimensions.
+After the kernel finishes executing, the result matrix C is copied back from the device to the host using cudaMemcpy.
+
+  // Print the result
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 10; j++) {
+            std::cout << C[i * N + j] << " ";
+        }
+        std::cout << std::endl;
+    }
+This code prints the first 10x10 elements of the result matrix C on the host using nested loops and std::cout.
+
+ 
+    // Free memory
+    cudaFree(dev_A);
+    cudaFree(dev_B);
+    cudaFree(dev_C);
+
+    cudaFreeHost(A);
+    cudaFreeHost(B);
+    cudaFreeHost(C);
+
+    return 0;
+}
+Finally, this code frees the allocated memory on the device and the host using cudaFree
+and cudaFreeHost respectively, and returns 0 to indicate successful program execution.
+
+
+
+
+
+RAW CODE:
+
+
+#include <cuda_runtime.h>
+#include <iostream>
+
+__global__ void matmul(int* A, int* B, int* C, int N) {
+    int Row = blockIdx.y * blockDim.y + threadIdx.y;
+    int Col = blockIdx.x * blockDim.x + threadIdx.x;
+
+    if (Row < N && Col < N) {
+        int Pvalue = 0;
+        for (int k = 0; k < N; k++) {
+            Pvalue += A[Row * N + k] * B[k * N + Col];
+        }
+        C[Row * N + Col] = Pvalue;
+    }
+}
+
+int main() {
+    int N = 512;
+    int size = N * N * sizeof(int);
+    int* A, * B, * C;
+    int* dev_A, * dev_B, * dev_C;
+
+    cudaMallocHost(&A, size);
+    cudaMallocHost(&B, size);
+    cudaMallocHost(&C, size);
+
+    cudaMalloc(&dev_A, size);
+    cudaMalloc(&dev_B, size);
+    cudaMalloc(&dev_C, size);
+
+    // Initialize matrices A and B
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            A[i * N + j] = i * N + j;
+            B[i * N + j] = j * N + i;
+        }
+    }
+
+    cudaMemcpy(dev_A, A, size, cudaMemcpyHostToDevice);
+    cudaMemcpy(dev_B, B, size, cudaMemcpyHostToDevice);
+
+    dim3 dimBlock(16, 16);
+    dim3 dimGrid(N / dimBlock.x, N / dimBlock.y);
+
+    matmul<<<dimGrid, dimBlock>>>(dev_A, dev_B, dev_C, N);
+
+    cudaMemcpy(C, dev_C, size, cudaMemcpyDeviceToHost);
+
+    // Print the result
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 10; j++) {
+            std::cout << C[i * N + j] << " ";
+        }
+        std::cout << std::endl;
+    }
+
+    // Free memory
+    cudaFree(dev_A);
+    cudaFree(dev_B);
+    cudaFree(dev_C);
+
+    cudaFreeHost(A);
+    cudaFreeHost(B);
+    cudaFreeHost(C);
+
+    return 0;
+}
+
+
+
+
+
+

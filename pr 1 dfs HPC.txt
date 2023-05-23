@@ -1,0 +1,102 @@
+import multiprocessing as mp
+This line imports the multiprocessing module, which allows for parallel execution.
+ 
+
+graph = {}
+visited = []
+
+These lines initialize an empty dictionary graph to store the adjacency
+list and an empty list visited to track visited nodes.
+ 
+def dfs(node):
+    stack = [node]
+
+    while stack:
+        curr_node = stack.pop()
+        if not visited[curr_node]:
+            visited[curr_node] = True
+            print(curr_node, end=" ")
+            stack.extend(adj_node for adj_node in graph[curr_node] if not visited[adj_node])
+
+This code defines the dfs function, which performs the Depth-First Search traversal.
+
+It takes a starting node as a parameter.
+
+The function uses a stack to store the nodes to be visited.
+
+It continues the loop until the stack becomes empty.
+
+Inside the loop, it pops the top node from the stack (curr_node).
+
+If curr_node is not visited, it marks it as visited, prints its value,
+
+and extends the stack with unvisited neighbors from the adjacency list (graph[curr_node]).
+
+ 
+if __name__ == '__main__':
+    n, m, start_node = map(int, input("Enter No of Node, Edges, and start node: ").split())
+    print("Enter Pair of edges:")
+
+    for _ in range(m):
+        u, v = map(int, input().split())
+        graph.setdefault(u, []).append(v)
+        graph.setdefault(v, []).append(u)
+    
+    visited = [False] * (n + 1)
+    
+    with mp.Pool() as pool:
+        pool.map(dfs, [start_node])
+
+This code is executed when the script is run directly (not imported as a module).
+
+It reads the number of nodes (n), edges (m), and the starting node (start_node) from the user.
+
+It then reads the pair of edges from the user and updates the adjacency list in the graph dictionary using setdefault.
+
+It initializes the visited list with False values for each node.
+
+Finally, it uses the Pool class from the multiprocessing module to achieve parallel execution of the dfs function with the starting node.
+
+
+
+
+
+
+RAW CODE:
+
+
+
+
+import multiprocessing as mp
+
+graph = {}
+visited = []
+
+def dfs(node):
+    stack = [node]
+    
+    while stack:
+        curr_node = stack.pop()
+        if not visited[curr_node]:
+            visited[curr_node] = True
+            print(curr_node, end=" ")
+            stack.extend(adj_node for adj_node in graph[curr_node] if not visited[adj_node])
+
+if __name__ == '__main__':
+    n, m, start_node = map(int, input("Enter No of Node, Edges, and start node: ").split())
+    print("Enter Pair of edges:")
+    
+    for _ in range(m):
+        u, v = map(int, input().split())
+        graph.setdefault(u, []).append(v)
+        graph.setdefault(v, []).append(u)
+    
+    visited = [False] * (n + 1)
+    
+    with mp.Pool() as pool:
+        pool.map(dfs, [start_node])
+
+
+
+
+

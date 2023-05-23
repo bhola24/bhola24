@@ -1,0 +1,84 @@
+import random
+import multiprocessing as mp
+
+These lines import the necessary libraries: random for generating a random array 
+and multiprocessing as mp for parallel execution.
+ 
+def bubble_sort(arr):
+    n = len(arr)
+    for i in range(n - 1):
+        for j in range(n - 1 - i):
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+    return arr
+
+This code defines the bubble_sort function, which implements the Bubble Sort algorithm.
+
+It takes an array arr as input.
+
+The function uses nested loops to iterate through the array elements.
+
+The outer loop runs n-1 times, where n is the length of the array.
+
+The inner loop compares adjacent elements and swaps them if they are in the wrong order.
+
+The function returns the sorted array.
+  
+
+if __name__ == '__main__':
+    arr = random.sample(range(1, 100), 10)
+    print("Original array:", arr)
+
+    with mp.Pool() as pool:
+        sorted_arr = pool.map(bubble_sort, [arr])[0]
+
+    print("Sorted array:", sorted_arr)
+
+This code ensures that the following block is executed only when the script is run directly (not imported as a module).
+
+It generates a random array (arr) of length 10 with numbers ranging from 1 to 100 using the random.sample function.
+
+The original array is printed.
+
+The Pool class from the multiprocessing library is used to achieve parallel execution.
+
+The map function applies the bubble_sort function to the input array ([arr]) and distributes the sorting task among multiple processes in parallel.
+
+The result is obtained as a list of sorted arrays, and in this case, only the first element ([0]) is selected.
+
+Finally, the sorted array is printed.
+
+
+
+
+
+
+
+
+RAW CODE :
+
+
+import random
+import multiprocessing as mp
+
+def bubble_sort(arr):
+    n = len(arr)
+    for i in range(n - 1):
+        for j in range(n - 1 - i):
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+    return arr
+
+if __name__ == '__main__':
+    arr = random.sample(range(1, 100), 10)
+    print("Original array:", arr)
+
+    with mp.Pool() as pool:
+        sorted_arr = pool.map(bubble_sort, [arr])[0]
+
+    print("Sorted array:", sorted_arr)
+
+
+
+
+

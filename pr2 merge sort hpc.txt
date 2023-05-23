@@ -1,0 +1,162 @@
+import random
+import time
+import pymp
+
+The random module is imported to generate random numbers for the test array.
+The time module is imported to measure the execution time.
+The pymp package is imported to enable parallelism using OpenMP.
+ 
+
+def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+
+    mid = len(arr) // 2
+    left = arr[:mid]
+    right = arr[mid:]
+
+    left = merge_sort(left)
+    right = merge_sort(right)
+
+    return merge(left, right)
+
+The merge_sort function implements the normal merge sort algorithm recursively. 
+
+It takes an array arr as input and returns the sorted array.
+
+If the length of the array is 1 or less, it is already sorted, so the function returns the array.
+
+The array is split into two halves, left and right.
+
+The merge_sort function is called recursively on the left and right halves.
+
+Finally, the sorted left and right halves are merged using the merge function.
+
+ 
+def merge(left, right):
+    merged = []
+    i = j = 0
+
+    while i < len(left) and j < len(right):
+        if left[i] <= right[j]:
+            merged.append(left[i])
+            i += 1
+        else:
+            merged.append(right[j])
+            j += 1
+
+    merged.extend(left[i:])
+    merged.extend(right[j:])
+
+    return merged
+
+The merge function takes two sorted arrays, left and right, and merges them into a single sorted array.
+
+It initializes an empty list merged and two pointers i and j to track the current indices of left and right arrays.
+
+The function compares the elements at the current indices of left
+and right and appends the smaller element to merged. It then increments the corresponding pointer.
+
+After the while loop, there might be remaining elements in either left or right. 
+The function extends merged with the remaining elements.
+
+Finally, the merged array is returned.
+ 
+def parallel_merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+
+    mid = len(arr) // 2
+    left = arr[:mid]
+    right = arr[mid:]
+
+    with pymp.Parallel(2) as p:
+        if p.thread_num == 0:
+            left = parallel_merge_sort(left)
+        else:
+            right = parallel_merge_sort(right)
+
+    return merge(left, right)
+
+The parallel_merge_sort function implements the parallel version of merge sort using OpenMP.
+
+If the length of the array is 1 or less, it is already sorted, so the function returns the array.
+
+The array is split into two halves, left and right.
+
+The pymp.Parallel context manager is used to specify the number of threads (in this case, 2). It creates a parallel region.
+
+Each thread executes a separate branch of the recursive merge sort operation based on its thread_num. 
+Thread 0 sorts the left half, while the other thread (thread 1) sorts the right half.
+
+Finally, the sorted left and right halves are merged using the merge function.
+ 
+
+arr = [random.randint(1, 100) for _ in range(100000
+
+
+
+
+RAW CODE:
+
+
+
+
+import random
+import time
+import pymp
+
+def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+
+    mid = len(arr) // 2
+    left = arr[:mid]
+    right = arr[mid:]
+
+    left = merge_sort(left)
+    right = merge_sort(right)
+
+    return merge(left, right)
+
+def merge(left, right):
+    merged = []
+    i = j = 0
+
+    while i < len(left) and j < len(right):
+        if left[i] <= right[j]:
+            merged.append(left[i])
+            i += 1
+        else:
+            merged.append(right[j])
+            j += 1
+
+    merged.extend(left[i:])
+    merged.extend(right[j:])
+
+    return merged
+
+def parallel_merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+
+    mid = len(arr) // 2
+    left = arr[:mid]
+    right = arr[mid:]
+
+    with pymp.Parallel(2) as p:
+        if p.thread_num == 0:
+            left = parallel_merge_sort(left)
+        else:
+            right = parallel_merge_sort(right)
+
+    return merge(left, right)
+
+# Test the parallel merge sort implementation
+arr = [random.randint(1, 100) for _ in range(100000)]
+start_time = time.time()
+sorted_arr = parallel_merge_sort(arr)
+end_time = time.time()
+
+print("Sorted array:", sorted_arr)
+print("Execution time:", end_time - start_time, "seconds")

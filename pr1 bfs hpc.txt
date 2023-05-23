@@ -1,0 +1,181 @@
+from queue import Queue
+from multiprocessing import Pool
+These lines import the necessary modules: Queue from the queue module for implementing the queue data structure, and Pool from the multiprocessing module for parallel execution.
+python
+ 
+class Node:
+    def __init__(self, data):
+        self.left = None
+        self.right = None
+        self.data = data
+
+This code defines a Node class to represent the nodes of the tree. Each node has a left and right child, along with a data attribute.
+python
+
+class BreadthFirstSearch:
+    def insert(self, root, data):
+        if not root:
+            return Node(data)
+
+        q = Queue()
+        q.put(root)
+
+        while not q.empty():
+            temp = q.get()
+
+            if not temp.left:
+                temp.left = Node(data)
+                return root
+            else:
+                q.put(temp.left)
+
+            if not temp.right:
+                temp.right = Node(data)
+                return root
+            else:
+                q.put(temp.right)
+
+This code defines a BreadthFirstSearch class that contains the insert method for inserting nodes into the tree in a breadth-first manner.
+The insert method takes a root node and the data to be inserted as parameters.
+If the root is empty (None), a new node with the given data is created and returned.
+Otherwise, a queue (q) is created, and the root node is added to the queue.
+The method then enters a loop that continues until the queue is empty.
+Inside the loop, the first node from the queue is retrieved (temp).
+If temp doesn't have a left child, a new node with the given data is created as its left child, and the root is returned.
+Otherwise, the left child of temp is added to the queue.
+If temp doesn't have a right child, a new node with the given data is created as its right child, and the root is returned.
+Otherwise, the right child of temp is added to the queue.
+ 
+ 
+    def bfs_parallel(self, root):
+        if not root:
+            return
+
+        q = Queue()
+        q.put(root)
+        pool = Pool()
+
+        while not q.empty():
+            curr_node = q.get()
+            print(curr_node.data, end="\t")
+
+            if curr_node.left:
+                q.put(curr_node.left)
+            if curr_node.right:
+                q.put(curr_node.right)
+
+This code defines the bfs_parallel method, which performs the breadth-first search traversal of the tree.
+
+It takes the root node as a parameter.
+
+If the root is empty (None), the method returns.
+
+Otherwise, a queue (q) is created, and the root node is added to the queue.
+
+A Pool object is created to enable parallel processing.
+
+The method enters a loop that continues until the queue is empty.
+
+Inside the loop, the first node from the queue is retrieved (curr_node).
+
+The data of the curr_node is printed, followed by a tab character.
+
+If curr_node has a left child, it is added to the queue.
+
+If curr_node has a right child, it is added to the queue.
+
+if __name__ == '__main__':
+    root = None
+    bfs = BreadthFirstSearch
+
+
+
+
+
+
+
+
+
+
+
+RAW CODE:
+
+
+from queue import Queue
+from multiprocessing import Pool
+
+class Node:
+    def __init__(self, data):
+        self.left = None
+        self.right = None
+        self.data = data
+
+class BreadthFirstSearch:
+    def insert(self, root, data):
+        if not root:
+            return Node(data)
+
+        q = Queue()
+        q.put(root)
+
+        while not q.empty():
+            temp = q.get()
+
+            if not temp.left:
+                temp.left = Node(data)
+                return root
+            else:
+                q.put(temp.left)
+
+            if not temp.right:
+                temp.right = Node(data)
+                return root
+            else:
+                q.put(temp.right)
+
+    def bfs_parallel(self, root):
+        if not root:
+            return
+
+        q = Queue()
+        q.put(root)
+        pool = Pool()
+
+        while not q.empty():
+            curr_node = q.get()
+            print(curr_node.data, end="\t")
+
+            if curr_node.left:
+                q.put(curr_node.left)
+            if curr_node.right:
+                q.put(curr_node.right)
+
+if __name__ == '__main__':
+    root = None
+    bfs = BreadthFirstSearch()
+
+    while True:
+        data = int(input("Enter data (or -1 to stop): "))
+        if data == -1:
+            break
+        root = bfs.insert(root, data)
+
+    bfs.bfs_parallel(root)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
